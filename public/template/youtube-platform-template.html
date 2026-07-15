@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube — Uzbekistan</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+
+<nav class="yt-navbar" id="navbar">
+  <div class="navbar-left">
+    <button class="hamburger-btn" id="hamburgerBtn" title="Menyu"><i class="fas fa-bars"></i></button>
+    <a class="navbar-brand" href="#">
+      <img src="1.png" alt="Logo">
+      <span>Video</span>
+      <sup class="country-badge">UZ</sup>
+    </a>
+  </div>
+
+  <div class="navbar-center">
+    <div class="search-container">
+      <input type="search" placeholder="Qidirish" class="search-input" id="searchInput">
+      <button class="search-btn" title="Qidirish"><i class="fas fa-search"></i></button>
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    <button class="icon-btn" id="themeToggle" title="Mavzu almashtirish"><i class="fas fa-circle-half-stroke"></i></button>
+  </div>
+</nav>
+
+<div class="yt-wrapper">
+
+  <aside class="yt-sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="nav-item active"><i class="fas fa-home"></i><span class="nav-label">Bosh sahifa</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="section-title">Tarixiy shaxslar</div>
+      <div class="nav-item"><i class="fas fa-fire"></i><span class="nav-label">Trend</span></div>
+      <div class="nav-item"><i class="fas fa-bag-shopping"></i><span class="nav-label">Shopping</span></div>
+      <div class="nav-item"><i class="fas fa-music"></i><span class="nav-label">Musiqa</span></div>
+      <div class="nav-item"><i class="fas fa-gamepad"></i><span class="nav-label">Gaming</span></div>
+      <div class="nav-item"><i class="fas fa-newspaper"></i><span class="nav-label">Yangiliklar</span></div>
+      <div class="nav-item"><i class="fas fa-trophy"></i><span class="nav-label">Sport</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="section-title">Obunalar</div>
+      <div class="nav-item"><i class="fas fa-user-circle"></i><span class="nav-label">Dasturlash Akademiyasi</span></div>
+      <div class="nav-item"><i class="fas fa-user-circle"></i><span class="nav-label">Oshxona Sirlari</span></div>
+      <div class="nav-item"><i class="fas fa-user-circle"></i><span class="nav-label">Tabiat Dunyosi</span></div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <main class="yt-main" id="mainContent">
+    <div class="chips-container">
+      <div class="chips-scroll" id="chipsScroll">
+        <button class="chip active" data-category="all">Hammasi</button>
+        <button class="chip" data-category="music">Musiqa</button>
+        <button class="chip" data-category="gaming">Gaming</button>
+        <button class="chip" data-category="news">Yangiliklar</button>
+        <button class="chip" data-category="live">Jonli efir</button>
+        <button class="chip" data-category="sport">Sport</button>
+        <button class="chip" data-category="education">Ta'lim</button>
+        <button class="chip" data-category="tech">Texnologiya</button>
+        <button class="chip" data-category="comedy">Komediya</button>
+        <button class="chip" data-category="food">Oziq-ovqat</button>
+      </div>
+    </div>
+
+    <div class="videos-grid" id="videosGrid"></div>
+  </main>
+
+</div>
+
+<nav class="mobile-bottom-nav d-flex">
+  <a class="mobile-nav-item active">
+    <i class="fas fa-home"></i><span>Bosh sahifa</span>
+  </a>
+  <a class="mobile-nav-item">
+    <i class="fas fa-film"></i><span>Shorts</span>
+  </a>
+  <a class="mobile-nav-item">
+    <div class="create-icon">+</div>
+  </a>
+  <a class="mobile-nav-item">
+    <i class="fas fa-tv"></i><span>Obunalar</span>
+  </a>
+  <a class="mobile-nav-item">
+    <i class="fas fa-photo-film"></i><span>Kutubxona</span>
+  </a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="videos-data.js"></script>
+<script>
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('mainContent');
+const overlay = document.getElementById('overlay');
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+
+function isMobile() { return window.innerWidth < 992; }
+
+function toggleSidebar() {
+  if (isMobile()) {
+    const isOpen = sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  } else {
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('expanded');
+  }
+}
+
+function closeMobileSidebar() {
+  overlay.classList.remove('active');
+  sidebar.classList.remove('mobile-open');
+  document.body.style.overflow = '';
+}
+
+hamburgerBtn.addEventListener('click', toggleSidebar);
+overlay.addEventListener('click', closeMobileSidebar);
+
+document.getElementById('chipsScroll').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  filterVideos(chip.dataset.category);
+});
+
+function formatViews(count) {
+  if (count >= 1_000_000) return (count / 1_000_000).toFixed(1) + 'M';
+  if (count >= 1_000) return (count / 1_000).toFixed(1) + 'K';
+  return count.toString();
+}
+
+function timeAgo(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  const intervals = [
+    [31536000, 'yil'], [2592000, 'oy'],
+    [86400, 'kun'], [3600, 'soat'],
+    [60, 'daqiqa'], [1, 'soniya']
+  ];
+  for (const [secs, label] of intervals) {
+    const count = Math.floor(seconds / secs);
+    if (count >= 1) return `${count} ${label} oldin`;
+  }
+  return 'Hozir';
+}
+
+function renderVideos(videos) {
+  const grid = document.getElementById('videosGrid');
+  if (!videos.length) {
+    grid.innerHTML = `<p class="text-secondary" style="grid-column:1/-1;text-align:center;padding:40px 0;">Videolar topilmadi.</p>`;
+    return;
+  }
+  grid.innerHTML = videos.map(v => `
+    <div class="video-card" data-id="${v.id}">
+      <div class="thumbnail-wrapper">
+        <img src="${v.thumbnail}" alt="${v.title}" loading="lazy">
+        <span class="duration-badge">${v.duration}</span>
+        <div class="play-overlay"><i class="fas fa-play"></i></div>
+      </div>
+      <div class="card-info d-flex gap-2 mt-2">
+        <img src="${v.avatar}" class="channel-avatar rounded-circle" width="36" height="36" alt="${v.channel}" loading="lazy">
+        <div class="video-meta">
+          <h6 class="video-title">${v.title}</h6>
+          <p class="channel-name">
+            ${v.channel}
+            ${v.verified ? '<i class="fas fa-check-circle ms-1" style="font-size:11px"></i>' : ''}
+          </p>
+          <p class="video-stats">${formatViews(v.views)} ko'rishlar • ${timeAgo(v.date)}</p>
+        </div>
+        <button class="more-btn ms-auto"><i class="fas fa-ellipsis-v"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('videosGrid').addEventListener('click', (e) => {
+  if (e.target.closest('.more-btn')) return;
+  const card = e.target.closest('.video-card');
+  if (!card) return;
+  window.location.href = `watch.html?v=${card.dataset.id}`;
+});
+
+function filterVideos(category) {
+  const filtered = category === 'all'
+    ? videosData
+    : videosData.filter(v => v.category === category);
+  renderVideos(filtered);
+}
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  const activeChip = document.querySelector('.chip.active');
+  const base = activeChip && activeChip.dataset.category !== 'all'
+    ? videosData.filter(v => v.category === activeChip.dataset.category)
+    : videosData;
+  const filtered = q
+    ? base.filter(v => v.title.toLowerCase().includes(q) || v.channel.toLowerCase().includes(q))
+    : base;
+  renderVideos(filtered);
+});
+
+const themeToggle = document.getElementById('themeToggle');
+const htmlEl = document.documentElement;
+themeToggle.addEventListener('click', () => {
+  const current = htmlEl.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  htmlEl.setAttribute('data-theme', next);
+  localStorage.setItem('yt-theme', next);
+});
+const savedTheme = localStorage.getItem('yt-theme') || 'dark';
+htmlEl.setAttribute('data-theme', savedTheme);
+
+window.addEventListener('resize', () => {
+  if (!isMobile()) closeMobileSidebar();
+});
+
+renderVideos(videosData);
+</script>
+</body>
+</html>
