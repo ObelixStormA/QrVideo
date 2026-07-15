@@ -41,6 +41,7 @@ class Video extends Model
     protected function casts(): array
     {
         return [
+            'duration_seconds' => 'integer',
             'is_live' => 'boolean',
             'published_at' => 'datetime',
             'ar_enabled' => 'boolean',
