@@ -129,8 +129,8 @@ class VideosTable
                     Action::make('download_qr_png')
                         ->label('QR kod (PNG)')
                         ->icon(Heroicon::OutlinedQrCode)
-                        ->action(function (Video $record, GenerateArQrCodeAction $action) {
-                            $file = $action->execute($record, 'png');
+                        ->action(function (Video $record, GenerateArQrCodeAction $generateArQrCodeAction) {
+                            $file = $generateArQrCodeAction->execute($record, 'png');
 
                             return response()->streamDownload(
                                 fn () => print $file->content,
@@ -142,8 +142,8 @@ class VideosTable
                     Action::make('download_qr_svg')
                         ->label('QR kod (SVG)')
                         ->icon(Heroicon::OutlinedQrCode)
-                        ->action(function (Video $record, GenerateArQrCodeAction $action) {
-                            $file = $action->execute($record, 'svg');
+                        ->action(function (Video $record, GenerateArQrCodeAction $generateArQrCodeAction) {
+                            $file = $generateArQrCodeAction->execute($record, 'svg');
 
                             return response()->streamDownload(
                                 fn () => print $file->content,
