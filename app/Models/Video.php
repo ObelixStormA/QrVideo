@@ -57,6 +57,10 @@ class Video extends Model
             $video->ar_uuid ??= (string) Str::uuid();
         });
 
+        static::saving(function (self $video): void {
+            $video->ar_uuid ??= (string) Str::uuid();
+        });
+
         static::saved(function (self $video): void {
             if ($video->wasChanged('marker_image_path') && blank($video->mind_file_path)) {
                 CompileMindTarget::dispatch($video->id);

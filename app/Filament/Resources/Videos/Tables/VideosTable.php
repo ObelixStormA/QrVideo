@@ -160,7 +160,7 @@ class VideosTable
                 ])
                     ->label('QR kodni yuklab olish')
                     ->icon(Heroicon::OutlinedQrCode)
-                    ->visible(fn (Video $record): bool => auth()->user()?->can('update', $record) ?? false),
+                    ->visible(fn (Video $record): bool => filled($record->ar_uuid) && (auth()->user()?->can('update', $record) ?? false)),
 
                 EditAction::make(),
                 DeleteAction::make(),
