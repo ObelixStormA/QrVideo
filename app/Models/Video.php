@@ -98,7 +98,7 @@ class Video extends Model
             return 'JONLI';
         }
 
-        $seconds = $this->duration_seconds;
+        $seconds = (int) $this->duration_seconds;
         $hours = intdiv($seconds, 3600);
         $minutes = intdiv($seconds % 3600, 60);
         $secs = $seconds % 60;
