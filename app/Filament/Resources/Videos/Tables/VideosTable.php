@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Videos\Tables;
 
+use App\Actions\Videos\GenerateArInvitationPdfAction;
 use App\Actions\Videos\GenerateArQrCodeAction;
 use App\Models\Video;
 use Filament\Actions\Action;
@@ -157,6 +158,20 @@ class VideosTable
                         ->icon(Heroicon::OutlinedEye)
                         ->url(fn (Video $record): string => route('ar.show', $record->ar_uuid))
                         ->openUrlInNewTab(),
+
+                    Action::make('download_ar_invitation_pdf')
+                        ->label('Taklifnoma (PDF)')
+                        ->icon(Heroicon::OutlinedDocumentText)
+                        ->visible(fn (Video $record): bool => filled($record->marker_image_path))
+                        ->action(function (Video $record, GenerateArInvitationPdfAction $generateArInvitationPdfAction) {
+                            $file = $generateArInvitationPdfAction->execute($record);
+
+                            return response()->streamDownload(
+                                fn () => print $file->content,
+                                $file->filename,
+                                ['Content-Type' => $file->mimeType],
+                            );
+                        }),
                 ])
                     ->label('QR kodni yuklab olish')
                     ->icon(Heroicon::OutlinedQrCode)
