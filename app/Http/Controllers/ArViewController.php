@@ -21,11 +21,6 @@ class ArViewController extends Controller
             ], 404);
         }
 
-        if (! $video->isArReady()) {
-            return response()->view('ar.error', [
-                'message' => 'Bu video uchun AR hali tayyor emas. Birozdan so\'ng qayta urinib ko\'ring.',
-            ], 404);
-        }
 
         return response()->view('ar.show', [
             'video' => $video,
