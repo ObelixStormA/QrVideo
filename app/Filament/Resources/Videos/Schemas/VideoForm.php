@@ -119,11 +119,12 @@ class VideoForm
                                 FileUpload::make('marker_image_path')
                                     ->label('Marker rasm')
                                     ->image()
+                                    ->imageEditor()
                                     ->disk('public')
                                     ->directory('videos/markers')
                                     ->acceptedFileTypes(['image/jpeg', 'image/png'])
                                     ->maxSize(10240)
-                                    ->helperText('Jurnalga chop etiladigan rasm. Kontrastli, detallarga boy rasm tanlang — bir xil rangli/tekis rasmlar yomon kuzatiladi.')
+                                    ->helperText('Jurnalga chop etiladigan rasm. Kontrastli, detallarga boy rasm tanlang — bir xil rangli/tekis rasmlar yomon kuzatiladi. Video qanday nisbatda chiqishini xohlasangiz, rasmni ham shu nisbatda kesib (crop) saqlang — AR video aynan shu rasm nisbatida chiqadi.')
                                     ->columnSpanFull(),
 
                                 FileUpload::make('mind_file_path')
