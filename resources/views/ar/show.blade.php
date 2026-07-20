@@ -111,6 +111,10 @@
         const hintEl = document.querySelector('#ar-hint');
         const soundBtn = document.querySelector('#ar-sound-btn');
 
+        sceneEl.addEventListener('renderstart', () => {
+            sceneEl.renderer.setClearColor(0x000000, 0);
+        });
+
         let arReadyFired = false;
 
         const readyTimeout = setTimeout(() => {
