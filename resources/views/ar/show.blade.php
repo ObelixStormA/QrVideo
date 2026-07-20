@@ -78,7 +78,7 @@
     <a-scene
         mindar-image="imageTargetSrc: {{ $mindUrl }}; autoStart: true; uiScanning: false; uiLoading: false; uiError: false; warmupTolerance: 2; missTolerance: 15;"
         color-space="sRGB"
-        renderer="colorManagement: true"
+        renderer="colorManagement: true; alpha: true"
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false"
         embedded
