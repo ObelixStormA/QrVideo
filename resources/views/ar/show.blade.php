@@ -99,7 +99,7 @@
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <a-entity id="ar-target" mindar-image-target="targetIndex: 0">
-            <a-video src="#ar-video" width="1" height="{{ $ratio }}" position="0 0 0"></a-video>
+            <a-video src="#ar-video" width="1" height="{{ $ratio }}" position="0 0 0" scale="0.95 0.95 0.95"></a-video>
         </a-entity>
     </a-scene>
 
