@@ -21,6 +21,15 @@ class ArViewController extends Controller
             ], 404);
         }
 
+        if (! $video->isArReady()) {
+            return response()->view('ar.error', [
+                'message' => match ($video->mind_compile_status) {
+                    'processing', 'pending' => 'AR target hali tayyorlanmoqda. Birozdan so\'ng qayta urinib ko\'ring.',
+                    'failed' => 'AR target tayyorlashda xatolik yuz berdi. Administratorga murojaat qiling.',
+                    default => 'Bu video uchun AR funksiyasi hali yoqilmagan.',
+                },
+            ], 404);
+        }
 
         return response()->view('ar.show', [
             'video' => $video,

@@ -76,7 +76,7 @@
     <button id="ar-sound-btn" class="ar-sound-btn" type="button">🔇 Ovozni yoqish</button>
 
     <a-scene
-        mindar-image="imageTargetSrc: {{ $mindUrl }}; autoStart: true; uiScanning: false; uiLoading: false; uiError: false;"
+        mindar-image="imageTargetSrc: {{ $mindUrl }}; autoStart: true; uiScanning: false; uiLoading: false; uiError: false; warmupTolerance: 2; missTolerance: 15;"
         color-space="sRGB"
         renderer="colorManagement: true"
         vr-mode-ui="enabled: false"
@@ -111,12 +111,23 @@
         const hintEl = document.querySelector('#ar-hint');
         const soundBtn = document.querySelector('#ar-sound-btn');
 
+        let arReadyFired = false;
+
+        const readyTimeout = setTimeout(() => {
+            if (!arReadyFired) {
+                hintEl.textContent = "Kamera ochilmayapti. Sahifani https:// orqali oching, kameraga ruxsat bering va qayta urinib ko'ring.";
+            }
+        }, 12000);
+
         sceneEl.addEventListener('arReady', () => {
+            arReadyFired = true;
+            clearTimeout(readyTimeout);
             hintEl.textContent = '📷 Kamerani jurnaldagi rasmga qarating';
             soundBtn.style.display = 'block';
         });
 
         sceneEl.addEventListener('arError', () => {
+            clearTimeout(readyTimeout);
             hintEl.textContent = "Kameraga ruxsat berilmadi yoki qurilma qo'llab-quvvatlamaydi.";
         });
 
