@@ -49,6 +49,22 @@
             border-radius: 14px;
         }
 
+        .ar-debug {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: rgba(0, 255, 0, .15);
+            color: #0f0;
+            font-family: monospace;
+            font-size: 11px;
+            line-height: 1.4;
+            padding: 6px 8px;
+            white-space: pre-wrap;
+            pointer-events: none;
+        }
+
         .ar-sound-btn {
             position: fixed;
             bottom: 24px;
@@ -69,6 +85,8 @@
     </style>
 </head>
 <body>
+    <div id="ar-debug" class="ar-debug">debug...</div>
+
     <div id="ar-overlay" class="ar-overlay">
         <div id="ar-hint" class="ar-hint">Yuklanmoqda...</div>
     </div>
@@ -114,6 +132,29 @@
         sceneEl.addEventListener('renderstart', () => {
             sceneEl.renderer.setClearColor(0x000000, 0);
         });
+
+        const debugEl = document.querySelector('#ar-debug');
+        setInterval(() => {
+            const camVideo = Array.from(document.querySelectorAll('video')).find(v => v.id !== 'ar-video');
+            const canvas = document.querySelector('a-scene canvas.a-canvas');
+            const lines = [];
+            lines.push('camVideo found: ' + !!camVideo);
+            if (camVideo) {
+                const cs = getComputedStyle(camVideo);
+                lines.push('cam: ' + camVideo.videoWidth + 'x' + camVideo.videoHeight
+                    + ' paused=' + camVideo.paused + ' readyState=' + camVideo.readyState);
+                lines.push('cam css: display=' + cs.display + ' visibility=' + cs.visibility
+                    + ' opacity=' + cs.opacity + ' z=' + cs.zIndex);
+                lines.push('cam rect: ' + JSON.stringify(camVideo.getBoundingClientRect()));
+            }
+            lines.push('canvas found: ' + !!canvas);
+            if (canvas) {
+                const cs2 = getComputedStyle(canvas);
+                lines.push('canvas css: opacity=' + cs2.opacity + ' z=' + cs2.zIndex + ' bg=' + cs2.backgroundColor);
+            }
+            lines.push('renderer: ' + !!sceneEl.renderer + ' clearAlpha=' + (sceneEl.renderer ? sceneEl.renderer.getClearAlpha() : 'n/a'));
+            debugEl.textContent = lines.join('\n');
+        }, 1000);
 
         let arReadyFired = false;
 
