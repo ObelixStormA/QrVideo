@@ -49,22 +49,6 @@
             border-radius: 14px;
         }
 
-        .ar-debug {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 999;
-            background: rgba(0, 255, 0, .15);
-            color: #0f0;
-            font-family: monospace;
-            font-size: 11px;
-            line-height: 1.4;
-            padding: 6px 8px;
-            white-space: pre-wrap;
-            pointer-events: none;
-        }
-
         .ar-sound-btn {
             position: fixed;
             bottom: 24px;
@@ -85,8 +69,6 @@
     </style>
 </head>
 <body>
-    <div id="ar-debug" class="ar-debug">debug...</div>
-
     <div id="ar-overlay" class="ar-overlay">
         <div id="ar-hint" class="ar-hint">Yuklanmoqda...</div>
     </div>
@@ -131,41 +113,20 @@
 
         sceneEl.addEventListener('renderstart', () => {
             sceneEl.renderer.setClearColor(0x000000, 0);
-            sceneEl.object3D.background = null;
         });
 
-        const debugEl = document.querySelector('#ar-debug');
-        setInterval(() => {
-            const canvas = document.querySelector('a-scene canvas.a-canvas');
-            const lines = [];
-            const px = Math.floor(window.innerWidth / 2);
-            const py = 130;
+        function attachCameraBackground() {
+            const arSystem = sceneEl.systems['mindar-image-system'];
+            const camVideo = arSystem && arSystem.video;
+            if (!camVideo || !window.AFRAME || !AFRAME.THREE) return false;
 
-            if (canvas) {
-                const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-                if (gl) {
-                    const rect = canvas.getBoundingClientRect();
-                    const dpx = Math.round((px - rect.left) * canvas.width / rect.width);
-                    const dpy = Math.round(canvas.height - (py - rect.top) * canvas.height / rect.height);
-                    const pixel = new Uint8Array(4);
-                    try {
-                        gl.readPixels(dpx, dpy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
-                        lines.push('canvas WxH=' + canvas.width + 'x' + canvas.height + ' rect=' + Math.round(rect.width) + 'x' + Math.round(rect.height));
-                        lines.push('gl pixel@(' + dpx + ',' + dpy + '): rgba(' + pixel[0] + ',' + pixel[1] + ',' + pixel[2] + ',' + pixel[3] + ')');
-                    } catch (e) {
-                        lines.push('readPixels error: ' + e.message);
-                    }
-                } else {
-                    lines.push('no gl context');
-                }
-            } else {
-                lines.push('no canvas');
-            }
+            const THREE = AFRAME.THREE;
+            const texture = new THREE.VideoTexture(camVideo);
+            texture.colorSpace = THREE.SRGBColorSpace || THREE.sRGBEncoding;
+            sceneEl.object3D.background = texture;
 
-            const bodyBg = getComputedStyle(document.body).backgroundColor;
-            lines.push('body bg: ' + bodyBg);
-            debugEl.textContent = lines.join('\n');
-        }, 1000);
+            return true;
+        }
 
         let arReadyFired = false;
 
@@ -180,6 +141,7 @@
             clearTimeout(readyTimeout);
             hintEl.textContent = '📷 Kamerani jurnaldagi rasmga qarating';
             soundBtn.style.display = 'block';
+            attachCameraBackground();
         });
 
         sceneEl.addEventListener('arError', () => {
