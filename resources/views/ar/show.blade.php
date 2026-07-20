@@ -160,9 +160,11 @@
         });
 
         soundBtn.addEventListener('click', () => {
-            videoEl.muted = false;
-            videoEl.play().catch(() => {});
-            soundBtn.style.display = 'none';
+            videoEl.muted = !videoEl.muted;
+            if (!videoEl.muted) {
+                videoEl.play().catch(() => {});
+            }
+            soundBtn.textContent = videoEl.muted ? "🔇 Ovozni yoqish" : "🔊 Ovozni o'chirish";
         });
     </script>
 </body>
