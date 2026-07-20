@@ -152,6 +152,8 @@
             if (canvas) {
                 const cs2 = getComputedStyle(canvas);
                 lines.push('canvas css: opacity=' + cs2.opacity + ' z=' + cs2.zIndex + ' bg=' + cs2.backgroundColor);
+                const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+                lines.push('gl ctx attrs: ' + (gl ? JSON.stringify(gl.getContextAttributes()) : 'no gl'));
             }
             lines.push('renderer: ' + !!sceneEl.renderer + ' clearAlpha=' + (sceneEl.renderer ? sceneEl.renderer.getClearAlpha() : 'n/a'));
             lines.push('scene.bg: ' + (sceneEl.object3D ? sceneEl.object3D.background : 'n/a'));
