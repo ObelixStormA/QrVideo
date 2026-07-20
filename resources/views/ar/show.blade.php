@@ -148,15 +148,22 @@
                     + ' opacity=' + cs.opacity + ' z=' + cs.zIndex);
                 lines.push('cam rect: ' + JSON.stringify(camVideo.getBoundingClientRect()));
             }
-            lines.push('canvas found: ' + !!canvas);
+            lines.push('canvas found: ' + !!canvas + ' count=' + document.querySelectorAll('canvas').length);
             if (canvas) {
                 const cs2 = getComputedStyle(canvas);
                 lines.push('canvas css: opacity=' + cs2.opacity + ' z=' + cs2.zIndex + ' bg=' + cs2.backgroundColor);
-                const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-                lines.push('gl ctx attrs: ' + (gl ? JSON.stringify(gl.getContextAttributes()) : 'no gl'));
             }
-            lines.push('renderer: ' + !!sceneEl.renderer + ' clearAlpha=' + (sceneEl.renderer ? sceneEl.renderer.getClearAlpha() : 'n/a'));
+            const sceneCS = getComputedStyle(sceneEl);
+            lines.push('scene css: pos=' + sceneCS.position + ' z=' + sceneCS.zIndex
+                + ' transform=' + sceneCS.transform + ' opacity=' + sceneCS.opacity
+                + ' isolation=' + sceneCS.isolation);
             lines.push('scene.bg: ' + (sceneEl.object3D ? sceneEl.object3D.background : 'n/a'));
+            lines.push('camVideo.parent===body: ' + (camVideo ? camVideo.parentElement === document.body : 'n/a')
+                + ' aScene.parent===body: ' + (sceneEl.parentElement === document.body));
+            const px = Math.floor(window.innerWidth / 2);
+            const py = 130;
+            const topEl = document.elementFromPoint(px, py);
+            lines.push('elementFromPoint(' + px + ',' + py + '): ' + (topEl ? (topEl.tagName + (topEl.id ? '#' + topEl.id : '') + (topEl.className ? '.' + String(topEl.className).replace(/\s+/g,'.') : '')) : 'none'));
             debugEl.textContent = lines.join('\n');
         }, 1000);
 
