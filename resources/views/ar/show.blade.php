@@ -131,6 +131,7 @@
 
         sceneEl.addEventListener('renderstart', () => {
             sceneEl.renderer.setClearColor(0x000000, 0);
+            sceneEl.object3D.background = null;
         });
 
         const debugEl = document.querySelector('#ar-debug');
@@ -153,6 +154,7 @@
                 lines.push('canvas css: opacity=' + cs2.opacity + ' z=' + cs2.zIndex + ' bg=' + cs2.backgroundColor);
             }
             lines.push('renderer: ' + !!sceneEl.renderer + ' clearAlpha=' + (sceneEl.renderer ? sceneEl.renderer.getClearAlpha() : 'n/a'));
+            lines.push('scene.bg: ' + (sceneEl.object3D ? sceneEl.object3D.background : 'n/a'));
             debugEl.textContent = lines.join('\n');
         }, 1000);
 
