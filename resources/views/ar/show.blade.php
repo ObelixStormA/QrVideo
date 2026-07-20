@@ -136,34 +136,34 @@
 
         const debugEl = document.querySelector('#ar-debug');
         setInterval(() => {
-            const camVideo = Array.from(document.querySelectorAll('video')).find(v => v.id !== 'ar-video');
             const canvas = document.querySelector('a-scene canvas.a-canvas');
             const lines = [];
-            lines.push('camVideo found: ' + !!camVideo);
-            if (camVideo) {
-                const cs = getComputedStyle(camVideo);
-                lines.push('cam: ' + camVideo.videoWidth + 'x' + camVideo.videoHeight
-                    + ' paused=' + camVideo.paused + ' readyState=' + camVideo.readyState);
-                lines.push('cam css: display=' + cs.display + ' visibility=' + cs.visibility
-                    + ' opacity=' + cs.opacity + ' z=' + cs.zIndex);
-                lines.push('cam rect: ' + JSON.stringify(camVideo.getBoundingClientRect()));
-            }
-            lines.push('canvas found: ' + !!canvas + ' count=' + document.querySelectorAll('canvas').length);
-            if (canvas) {
-                const cs2 = getComputedStyle(canvas);
-                lines.push('canvas css: opacity=' + cs2.opacity + ' z=' + cs2.zIndex + ' bg=' + cs2.backgroundColor);
-            }
-            const sceneCS = getComputedStyle(sceneEl);
-            lines.push('scene css: pos=' + sceneCS.position + ' z=' + sceneCS.zIndex
-                + ' transform=' + sceneCS.transform + ' opacity=' + sceneCS.opacity
-                + ' isolation=' + sceneCS.isolation);
-            lines.push('scene.bg: ' + (sceneEl.object3D ? sceneEl.object3D.background : 'n/a'));
-            lines.push('camVideo.parent===body: ' + (camVideo ? camVideo.parentElement === document.body : 'n/a')
-                + ' aScene.parent===body: ' + (sceneEl.parentElement === document.body));
             const px = Math.floor(window.innerWidth / 2);
             const py = 130;
-            const topEl = document.elementFromPoint(px, py);
-            lines.push('elementFromPoint(' + px + ',' + py + '): ' + (topEl ? (topEl.tagName + (topEl.id ? '#' + topEl.id : '') + (topEl.className ? '.' + String(topEl.className).replace(/\s+/g,'.') : '')) : 'none'));
+
+            if (canvas) {
+                const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+                if (gl) {
+                    const rect = canvas.getBoundingClientRect();
+                    const dpx = Math.round((px - rect.left) * canvas.width / rect.width);
+                    const dpy = Math.round(canvas.height - (py - rect.top) * canvas.height / rect.height);
+                    const pixel = new Uint8Array(4);
+                    try {
+                        gl.readPixels(dpx, dpy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+                        lines.push('canvas WxH=' + canvas.width + 'x' + canvas.height + ' rect=' + Math.round(rect.width) + 'x' + Math.round(rect.height));
+                        lines.push('gl pixel@(' + dpx + ',' + dpy + '): rgba(' + pixel[0] + ',' + pixel[1] + ',' + pixel[2] + ',' + pixel[3] + ')');
+                    } catch (e) {
+                        lines.push('readPixels error: ' + e.message);
+                    }
+                } else {
+                    lines.push('no gl context');
+                }
+            } else {
+                lines.push('no canvas');
+            }
+
+            const bodyBg = getComputedStyle(document.body).backgroundColor;
+            lines.push('body bg: ' + bodyBg);
             debugEl.textContent = lines.join('\n');
         }, 1000);
 
