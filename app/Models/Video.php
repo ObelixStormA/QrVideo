@@ -155,8 +155,8 @@ class Video extends Model
     public function isArReady(): bool
     {
         return $this->ar_enabled
-            && $this->mind_compile_status === 'ready'
-            && filled($this->mind_file_path);
+            && filled($this->mind_file_path)
+            && $this->mind_compile_status !== 'failed';
     }
 
     public function getAuthorAvatarUrlAttribute(): string
